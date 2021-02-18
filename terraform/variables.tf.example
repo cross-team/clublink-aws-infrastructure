@@ -46,11 +46,83 @@ variable "fargate_memory" {
 
 variable "db_user" {
   description = "RDS user"
-  default     = "2048"
+  default     = "db_user"
 }
 
 variable "db_pass" {
   description = "RDS password"
-  default     = "2048"
+  default     = "db_pass"
 }
+
+variable "name" {
+  description = "RDS database created when instance is initialized"
+  default     = "db_name"
+}
+
+variable "name" {
+  description = "RDS database created when instance is initialized"
+  default     = "db_name"
+}
+
+variable "db_name" {
+  description = "RDS database created when instance is initialized"
+  default     = "db_name"
+}
+
+variable "JWT_SECRET" {
+  description = "Environment to run"
+  default     = "jwt_secret"
+}
+variable "backend_web_frontend_url" {
+  description = "Environment to run"
+  default     = "http://localhost:3000"
+}
+variable "backend_recaptcha_secret" {
+  description = "Environment to run"
+  default     = "secret"
+}
+variable "backend_key_gen_buffer_size" {
+  description = "Environment to run"
+  default     = "10"
+}
+
+variable "backend_key_gen_hostname"{
+  description = "hostname for key gen service"
+  default     = "staging-kg.clubl.ink"
+}
+
+variable "backend_key_gen_port"{
+  description = "port for key gen service (should be tls)"
+  default     = "443"
+}
+
+variable "backend_graphql_api_port"{
+  description = "port for graphql endpoint"
+  default     = "8080"
+}
+
+variable "backend_graphql_schema_path"{
+  description = "path for graphql schema"
+  default     = "app/adapter/gqlapi/schema.graphql"
+}
+
+variable "backend_graphql_i_ql_default_query"{
+  description = "default query for graphql schema"
+  default     = "query {}"
+}
+
+variable "backend_http_api_port"{
+  description = "http api port"
+  default     = "80"
+}
+
+variable "backend_grpc_api_port"{
+  description = "http api port"
+  default     = "8081"
+}
+
+variable "backend_grpc_api_port"{
+  description = "http api port"
+  default     = "8081"
+
 

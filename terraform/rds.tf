@@ -6,7 +6,7 @@ resource "aws_db_instance" "rds" {
   engine                 = "postgres"
   engine_version         = "11.2"
   instance_class         = "db.t2.small"
-  name                   = "clublinkDB"
+  name                   = var.db_name
   username               = var.db_user
   password               = var.db_pass
   db_subnet_group_name   = aws_db_subnet_group.rds_subnet_group.name
@@ -34,7 +34,7 @@ resource "aws_security_group" "rds_sg" {
     from_port       = "5432"
     to_port         = "5432"
     protocol        = "TCP"
-    security_groups = [aws_security_group.rds_access_sg.id]
+    security_groups = [aws_security_group.rds_access_sg.id, aws_security_group.ecs_tasks.id]
   }
 
   egress {
