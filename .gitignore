@@ -3,6 +3,7 @@
 *.tfstate.backup
 .terraform.tfstate.lock.info
 variables.tf
+terraform.tfvars
 
 # Module directory
 .terraform/

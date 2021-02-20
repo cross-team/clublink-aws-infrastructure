@@ -1,4 +1,4 @@
 resource "aws_ecr_repository" "main" {
-  name                 = "${var.name}-${var.environment}"
+  name                 = "clublink-backend"
   image_tag_mutability = "MUTABLE"
 }

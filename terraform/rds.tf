@@ -18,7 +18,7 @@ resource "aws_db_instance" "rds" {
 # RDS Subnet Group
 resource "aws_db_subnet_group" "rds_subnet_group" {
   name       = "rds-subnet-group"
-  subnet_ids = aws_subnet.private_subnet.*.id
+  subnet_ids = aws_subnet.private.*.id
 
   tags = {
     Name = "rds-subnet-group"
@@ -28,7 +28,7 @@ resource "aws_db_subnet_group" "rds_subnet_group" {
 # RDS Security Group
 resource "aws_security_group" "rds_sg" {
   name   = "rds-sg"
-  vpc_id = aws_vpc.vpc.id
+  vpc_id = aws_vpc.main.id
 
   ingress {
     from_port       = "5432"
@@ -51,7 +51,7 @@ resource "aws_security_group" "rds_sg" {
 
 # RDS Ingress Security Group
 resource "aws_security_group" "rds_access_sg" {
-  vpc_id = aws_vpc.vpc.id
+  vpc_id = aws_vpc.main.id
   name   = "rds-acess-sg"
 
   tags = {

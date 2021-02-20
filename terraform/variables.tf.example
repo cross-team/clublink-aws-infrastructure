@@ -121,8 +121,14 @@ variable "backend_grpc_api_port"{
   default     = "8081"
 }
 
-variable "backend_grpc_api_port"{
-  description = "http api port"
-  default     = "8081"
+variable "backend_auth_token_lifetime"{
+  description = "auth token lifetime"
+  default     = "1w"
+}
+
+variable "backend_search_api_timeout"{
+  description = "search api timeout"
+  default     = "1s"
+}
 
 
