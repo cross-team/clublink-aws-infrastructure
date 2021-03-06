@@ -35,6 +35,25 @@ data "template_file" "cb_app" {
   }
 }
 
+data "template_file" "cb_kgs" {
+  template = file("./templates/ecs/cb_kgs.json.tpl")
+
+  vars = {
+    app_image             = var.kgs_image
+    app_port              = var.kgs_port
+    fargate_cpu           = var.fargate_cpu
+    fargate_memory        = var.fargate_memory
+    aws_region            = var.aws_region
+    db_host               = aws_db_instance.rds.address  
+    db_port               = var.db_port
+    db_user               = var.db_user
+    db_pass               = var.db_pass
+    kgs_db_name           = var.kgs_db_name
+    backend_grpc_api_port = var.backend_grpc_api_port
+    kgs_enable_encryption = var.kgs_enable_encryption
+  }
+}
+
 resource "aws_ecs_task_definition" "app" {
   family                   = "cb-app-task"
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
@@ -43,6 +62,16 @@ resource "aws_ecs_task_definition" "app" {
   cpu                      = var.fargate_cpu
   memory                   = var.fargate_memory
   container_definitions    = data.template_file.cb_app.rendered
+}
+
+resource "aws_ecs_task_definition" "kgs" {
+  family                   = "cb-kgs-task"
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu                      = var.fargate_cpu
+  memory                   = var.fargate_memory
+  container_definitions    = data.template_file.cb_kgs.rendered
 }
 
 resource "aws_ecs_service" "main" {
