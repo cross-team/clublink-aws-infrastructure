@@ -35,6 +35,25 @@ data "template_file" "cb_app" {
   }
 }
 
+data "template_file" "cb_kgs" {
+  template = file("./templates/ecs/cb_kgs.json.tpl")
+
+  vars = {
+    app_image             = var.kgs_image
+    app_port              = var.kgs_port
+    fargate_cpu           = var.fargate_cpu
+    fargate_memory        = var.fargate_memory
+    aws_region            = var.aws_region
+    db_host               = aws_db_instance.rds.address  
+    db_port               = var.db_port
+    db_user               = var.db_user
+    db_pass               = var.db_pass
+    kgs_db_name           = var.kgs_db_name
+    backend_grpc_api_port = var.backend_grpc_api_port
+    kgs_enable_encryption = var.kgs_enable_encryption
+  }
+}
+
 data "template_file" "cb_frontend" {
   template = file("./templates/ecs/cb_frontend.json.tpl")
 
@@ -68,6 +87,16 @@ resource "aws_ecs_task_definition" "frontend" {
   cpu                      = var.fargate_cpu
   memory                   = var.fargate_memory
   container_definitions    = data.template_file.cb_frontend.rendered
+}
+
+resource "aws_ecs_task_definition" "kgs" {
+  family                   = "cb-kgs-task"
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu                      = var.fargate_cpu
+  memory                   = var.fargate_memory
+  container_definitions    = data.template_file.cb_kgs.rendered
 }
 
 resource "aws_ecs_service" "main" {
@@ -114,3 +143,24 @@ resource "aws_ecs_service" "frontend" {
   depends_on = [aws_alb_listener.front_end, aws_iam_role_policy_attachment.ecs_task_execution_role]
 }
 
+resource "aws_ecs_service" "kgs" {
+  name            = "cb-service-kgs"
+  cluster         = aws_ecs_cluster.main.id
+  task_definition = aws_ecs_task_definition.kgs.arn
+  desired_count   = var.app_count
+  launch_type     = "FARGATE"
+
+  network_configuration {
+    security_groups  = [aws_security_group.ecs_tasks.id]
+    subnets          = aws_subnet.private.*.id
+    assign_public_ip = true
+  }
+
+  load_balancer {
+    target_group_arn = aws_alb_target_group.kgs.id
+    container_name   = "cb-kgs"
+    container_port   = var.kgs_port
+  }
+
+  depends_on = [aws_alb_listener.kgs, aws_iam_role_policy_attachment.ecs_task_execution_role]
+}
