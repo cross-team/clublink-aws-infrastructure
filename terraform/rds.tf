@@ -4,7 +4,7 @@ resource "aws_db_instance" "rds" {
   allocated_storage      = "25"
   storage_type           = "gp2"
   engine                 = "postgres"
-  engine_version         = "11.2"
+  engine_version         = "11.8"
   instance_class         = "db.t2.small"
   name                   = var.db_name
   username               = var.db_user
